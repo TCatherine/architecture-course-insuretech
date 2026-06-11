@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: scaletestapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scaletestapp-deployment
+  namespace: scaletestapp
+  labels:
+    app: scaletestapp
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "8080"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scaletestapp
+  template:
+    metadata:
+      labels:
+        app: scaletestapp
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - name: scaletestapp-container
+        image: docker.io/tkachevaki/scaletestapp
+        ports:
+        - containerPort: 8080 # Предполагается, что приложение внутри контейнера слушает порт 8080
+        resources:
+          limits:
+            memory: "10Mi"
+          requests:
+            memory: "5Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scaletestapp-service
+  namespace: scaletestapp
+  annotations:
+    metallb.io/ip-allocated-from-pool: lan-pool
+spec:
+  selector:
+    app: scaletestapp
+  ports:
+    - protocol: TCP
+      port: 80 
+      targetPort: 8080 
+  type: LoadBalancer 
