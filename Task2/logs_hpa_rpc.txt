@@ -1,0 +1,24 @@
+❯ kubectl describe hpa scaletestapp-hpa -n scaletestapp
+Name:                                  scaletestapp-hpa
+Namespace:                             scaletestapp
+Labels:                                <none>
+Annotations:                           <none>
+CreationTimestamp:                     Thu, 11 Jun 2026 09:16:18 +0300
+Reference:                             Deployment/scaletestapp-deployment
+Metrics:                               ( current / target )
+  "http_requests_per_second" on pods:  33501m / 10
+Min replicas:                          1
+Max replicas:                          10
+Deployment pods:                       4 current / 4 desired
+Conditions:
+  Type            Status  Reason              Message
+  ----            ------  ------              -------
+  AbleToScale     True    ReadyForNewScale    recommended size matches current size
+  ScalingActive   True    ValidMetricFound    the HPA was able to successfully calculate a replica count from pods metric http_requests_per_second
+  ScalingLimited  False   DesiredWithinRange  the desired count is within the acceptable range
+Events:
+  Type     Reason                        Age                    From                       Message
+  ----     ------                        ----                   ----                       -------
+  Warning  FailedComputeMetricsReplicas  4m3s (x12 over 6m49s)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get pods metric value: unable to get metric http_requests_per_second: unable to fetch metrics from custom metrics API: the server could not find the metric http_requests_per_second for pods
+  Warning  FailedGetPodsMetric           108s (x21 over 6m49s)  horizontal-pod-autoscaler  unable to get metric http_requests_per_second: unable to fetch metrics from custom metrics API: the server could not find the metric http_requests_per_second for pods
+  Normal   SuccessfulRescale             33s                    horizontal-pod-autoscaler  New size: 4; reason: pods metric http_requests_per_second above target
